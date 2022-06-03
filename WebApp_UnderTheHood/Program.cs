@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
+using WebApp_UnderTheHood.Authorization;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
@@ -8,6 +11,7 @@ builder.Services
         options.Cookie.Name = "custom_cookie_auth";
         options.LoginPath = "/account/login";
         options.AccessDeniedPath = "/account/accessdenied";
+        options.ExpireTimeSpan = TimeSpan.FromDays(1); // cookie expiration time
     });
 
 builder.Services
@@ -15,8 +19,12 @@ builder.Services
     {
         options.AddPolicy("admin_policy", policy => policy.RequireClaim("Admin"));
         options.AddPolicy("hr_policy", policy => policy.RequireClaim("Department", "HR"));
-        options.AddPolicy("hr_manager_policy", policy => policy.RequireClaim("Department", "HR").RequireClaim("HRManager", "true"));
+        options.AddPolicy("hr_manager_policy", 
+            policy => policy.RequireClaim("Department", "HR").RequireClaim("HRManager").Requirements.Add(new HRManagerRequirement(3))
+        );
     });
+
+builder.Services.AddSingleton<IAuthorizationHandler, HRManagerRequirementHandler>(); // custom claim requirement
 
 builder.Services.AddRazorPages();
 
