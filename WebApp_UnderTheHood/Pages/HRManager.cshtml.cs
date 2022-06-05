@@ -24,15 +24,43 @@ namespace WebApp_UnderTheHood.Pages
 
         public async Task OnGetAsync()
         {
+            WeatherForecastItems = await InvokeEnpoint<List<WeatherForecastDTO>>("OurWebAPI", "/weatherforecast");
+        }
+
+        private async Task<T> InvokeEnpoint<T>(string clientName, string url)
+        {
+            JwtToken token = null;
+
+            var strTokenObj = HttpContext.Session.GetString("access_token");
+
+            if (String.IsNullOrWhiteSpace(strTokenObj))
+            {
+                token = await Authenticate();
+            }
+            else
+            {
+                token = JsonConvert.DeserializeObject<JwtToken>(strTokenObj);
+            }
+
+            if (token == null || String.IsNullOrWhiteSpace(token.AccessToken) || token.ExpiresAt < DateTime.UtcNow)
+            {
+                token = await Authenticate();
+            }
+
+            var httpClient = _httpClientFactory.CreateClient(clientName);
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
+            return await httpClient.GetFromJsonAsync<T>(url);
+        }
+
+        private async Task<JwtToken> Authenticate()
+        {
+            // authentication and get token
             var httpClient = _httpClientFactory.CreateClient("OurWebAPI");
             var res = await httpClient.PostAsJsonAsync("auth", new Credential { UserName = "admin", Password = "password" });
             res.EnsureSuccessStatusCode();
             string strJwt = await res.Content.ReadAsStringAsync();
-            var token = JsonConvert.DeserializeObject<JwtToken>(strJwt);
-
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
-
-            WeatherForecastItems = await httpClient.GetFromJsonAsync<List<WeatherForecastDTO>>("/weatherforecast");
+            HttpContext.Session.SetString("access_token", strJwt);
+            return JsonConvert.DeserializeObject<JwtToken>(strJwt);
         }
     }
 }
