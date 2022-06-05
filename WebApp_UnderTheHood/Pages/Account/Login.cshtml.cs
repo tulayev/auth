@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using WebApp_UnderTheHood.Authorization;
 
 namespace WebApp_UnderTheHood.Pages.Account
 {
@@ -32,7 +32,7 @@ namespace WebApp_UnderTheHood.Pages.Account
                     new Claim("Department", "HR"), // required claim for HR policy from Program.cs
                     new Claim("HRManager", "HR"), // required claim for HR policy from Program.cs
                     new Claim("Admin", "true"), // required claim for Admin policy from Program.cs
-                    new Claim("EmploymentDate", "2022-06-01") // implement custom claim requirement for hr manager 
+                    new Claim("EmploymentDate", "2021-06-01") // implement custom claim requirement for hr manager 
                 };
 
                 var identity = new ClaimsIdentity(claims, "custom_cookie_auth");
@@ -51,18 +51,5 @@ namespace WebApp_UnderTheHood.Pages.Account
 
             return Page();
         }
-    }
-
-    public class Credential
-    {
-        [Required]
-        public string UserName { get; set; }
-        
-        [Required]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
-        
-        [Display(Name = "Remember Me")]
-        public bool RememberMe { get; set; }
     }
 }
