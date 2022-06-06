@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp_UnderTheHood", "WebA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web API", "Web API\Web API.csproj", "{2A290765-C8EA-4025-B8ED-A9CD3E5D9F20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web_App_Identity", "Web_App_Identity\Web_App_Identity.csproj", "{A2D16AB2-8CFB-4DC9-8864-316970A79B20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web_App_Identity", "Web_App_Identity\Web_App_Identity.csproj", "{A2D16AB2-8CFB-4DC9-8864-316970A79B20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
