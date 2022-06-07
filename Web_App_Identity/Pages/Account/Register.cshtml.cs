@@ -46,7 +46,7 @@ namespace Web_App_Identity.Pages.Account
                 string confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 string confirmationLink = Url.PageLink(pageName: "/account/confirmemail", values: new { userId = user.Id, token = confirmationToken });
 
-                await _emailService.SendAsync("webappidentity@test.com", user.Email, "Please confirm your email", $"Please click on this link to confirm your email address: {confirmationLink}");
+                await _emailService.SendAsync(user.Email, "Please confirm your email", $"Please click on this link to confirm your email address: {confirmationLink}");
 
                 return RedirectToPage("/account/login");
             }

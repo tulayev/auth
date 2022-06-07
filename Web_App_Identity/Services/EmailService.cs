@@ -1,28 +1,47 @@
-﻿using Microsoft.Extensions.Options;
-using System.Net;
-using System.Net.Mail;
+﻿using MailKit.Net.Smtp;
+using Microsoft.Extensions.Options;
+using MimeKit;
 using Web_App_Identity.Settings;
 
 namespace Web_App_Identity.Services
 {
     public class EmailService : IEmailService
     {
-        private readonly IOptions<SMTPSettings> _smptpSettings;
+        private readonly SMTPSettings _smptpSettings;
 
         public EmailService(IOptions<SMTPSettings> smptpSettings)
         {
-            _smptpSettings = smptpSettings;
+            _smptpSettings = smptpSettings.Value;
         }
 
-        public async Task SendAsync(string from, string to, string subject, string body)
+        public async Task SendAsync(string to, string subject, string body)
         {
-            var message = new MailMessage(_smptpSettings.Value.Username, to, subject, body);
+            /*var message = new MailMessage(_smptpSettings.Username, to, subject, body);
 
-            using (var emailClient = new SmtpClient(_smptpSettings.Value.Host, _smptpSettings.Value.Port))
+            using (var emailClient = new SmtpClient(_smptpSettings.Host, _smptpSettings.Port))
             {
-                emailClient.Credentials = new NetworkCredential(_smptpSettings.Value.Username, _smptpSettings.Value.Password);
+                emailClient.Credentials = new NetworkCredential(_smptpSettings.Username, _smptpSettings.Password);
                 emailClient.EnableSsl = true;
                 await emailClient.SendMailAsync(message);
+            }*/
+
+            var emailMessage = new MimeMessage();
+
+            emailMessage.From.Add(new MailboxAddress("Web App Identity", _smptpSettings.Username));
+            emailMessage.To.Add(new MailboxAddress("", to));
+            emailMessage.Subject = subject;
+            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+            {
+                Text = body
+            };
+
+            using (var client = new SmtpClient())
+            {
+                await client.ConnectAsync(_smptpSettings.Host, _smptpSettings.Port, true);
+                await client.AuthenticateAsync(_smptpSettings.Username, _smptpSettings.Password);
+                await client.SendAsync(emailMessage);
+
+                await client.DisconnectAsync(true);
             }
         }
     }
