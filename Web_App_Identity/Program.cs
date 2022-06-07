@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Web_App_Identity.Data;
+using Web_App_Identity.Services;
+using Web_App_Identity.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,13 +24,18 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
         options.User.RequireUniqueEmail = true;
         options.SignIn.RequireConfirmedEmail = true;
     })
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/account/login";
     options.AccessDeniedPath = "/account/accessdenied";
 });
+
+builder.Services.Configure<SMTPSettings>(builder.Configuration.GetSection("SMTP"));
+
+builder.Services.AddSingleton<IEmailService, EmailService>(); 
 
 builder.Services.AddRazorPages();
 
