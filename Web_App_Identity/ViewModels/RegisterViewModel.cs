@@ -11,5 +11,11 @@ namespace Web_App_Identity.ViewModels
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        [Required]
+        public string Department { get; set; }
+        
+        [Required]
+        public string Position { get; set; }
     }
 }

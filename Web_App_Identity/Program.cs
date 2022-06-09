@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Web_App_Identity.Data;
+using Web_App_Identity.Data.Account;
 using Web_App_Identity.Services;
 using Web_App_Identity.Settings;
 
@@ -14,7 +15,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     );
 });
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+builder.Services.AddIdentity<User, IdentityRole>(options =>
     {
         options.Password.RequiredLength = 4;
         options.Password.RequireLowercase = true;
