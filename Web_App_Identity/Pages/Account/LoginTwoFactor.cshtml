@@ -1,0 +1,29 @@
+﻿@page
+@model Web_App_Identity.Pages.Account.LoginTwoFactorModel
+@{
+}
+
+<h3>The OTP is sent to your email</h3>
+
+<div class="container border" style="padding: 20px;">
+    <form method="post">
+        <div class="text-danger" asp-validation-summary="All"></div>
+        <div class="row">
+            <div class="col-2">
+                <label asp-for="EmailMFA.SecurityCode"></label>
+            </div>
+            <div class="col">
+                <input type="text" asp-for="EmailMFA.SecurityCode" class="form-control" />
+            </div>
+            <span class="text-danger" asp-validation-for="EmailMFA.SecurityCode"></span>
+        </div>
+         <div class="row">
+            <div class="col-2">
+                <input type="submit" class="btn btn-primary" value="Verify" />
+            </div>
+            <div class="col">
+                <input type="hidden" asp-for="EmailMFA.RememberMe" />
+            </div>
+        </div>
+    </form>
+</div>
